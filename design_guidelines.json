@@ -1,0 +1,134 @@
+{
+  "project_name": "Nestavia Zirakpur - The Himalayan Gateway",
+  "app_type": "hybrid_fullstack",
+  "archetype": "LUXURY & HIGH-END HOSPITALITY (ARCHETYPE 5 / ORGANIC ELEGANCE)",
+  "visual_identity": {
+    "brand_name": "Nestavia Zirakpur",
+    "tagline": "Where Every Journey Begins in Comfort",
+    "sub_tagline": "The Himalayan Gateway - Luxury Direct-Booking Sanctuary",
+    "theme_mode": "Light Luxury Primary with Deep Emerald Accents & Dark Emerald Admin Mode",
+    "color_palette": {
+      "primary_emerald": "#0F281E",
+      "deep_forest": "#1B3B2B",
+      "sage_green": "#3D5A45",
+      "accent_gold": "#C5A059",
+      "warm_champagne": "#E6C687",
+      "gold_hover": "#B38C43",
+      "soft_sand_bg": "#F8F6F0",
+      "pure_white": "#FFFFFF",
+      "slate_dark": "#1A1D1A",
+      "muted_text": "#5A655D",
+      "light_border": "#E2E8F0",
+      "emerald_light_bg": "#F0F4F1",
+      "error_red": "#DC2626",
+      "success_green": "#16A34A"
+    },
+    "typography": {
+      "heading_font": "Cormorant Garamond, Playfair Display, serif",
+      "body_font": "Plus Jakarta Sans, Manrope, sans-serif",
+      "mono_font": "JetBrains Mono, monospace",
+      "rules": {
+        "hero_heading": "font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0F281E]",
+        "section_heading": "font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#0F281E]",
+        "subheading": "font-sans text-lg sm:text-xl font-medium text-[#3D5A45]",
+        "eyebrow": "font-sans text-xs sm:text-sm uppercase tracking-[0.25em] text-[#C5A059] font-bold",
+        "body": "font-sans text-base leading-relaxed text-[#1A1D1A]"
+      }
+    },
+    "brand_emblem_logo": {
+      "description": "Circular emblem with deep emerald #0F281E background, gold #C5A059 border, central serif 'N' monogram, surrounded by curved text 'NESTAVIA • ZIRAKPUR • THE HIMALAYAN GATEWAY'",
+      "svg_spec": "Include inline SVG component for brand logo used in Navbar, Loaders, Invoices, QR Overlays, and Footer"
+    }
+  },
+  "layout_and_spacing": {
+    "spacing_philosophy": "Generous luxury spacing (2x-3x standard padding). Internal container padding p-6 to p-12.",
+    "border_radius": "Rounded-xl (12px) for cards, rounded-2xl (16px) for modals/widgets, rounded-full for pills",
+    "hero_grid_5_photo": {
+      "structure": "1 large dominant image on left (col-span-2 row-span-2), 4 smaller stacked grid images on right (col-span-1 each)",
+      "lightbox_trigger": "'View all photos' button on bottom right of grid with photo icon & counter"
+    }
+  },
+  "key_features_and_business_logic": {
+    "dynamic_pricing_engine": {
+      "base_rate": 2400,
+      "base_guest_count": 2,
+      "extra_guest_fee_per_night": 500,
+      "max_extra_guests": 2,
+      "weekend_markup_percent": 15,
+      "last_minute_discount_percent": 10,
+      "last_minute_cutoff_hours": 48
+    },
+    "down_payment_matrix": {
+      "partial_rate_percent": 70,
+      "partial_eligible_days": 7,
+      "force_full_payment_if_under": 7
+    },
+    "post_booking_location_privacy": {
+      "pre_approval_address": "Near VIP Road, Zirakpur, Punjab (Exact landmark & GPS PIN revealed after host booking approval)",
+      "post_approval_address": "Tower 4, Flat 602, The Himalayan Heights, VIP Road, Zirakpur, Punjab 140603"
+    },
+    "payment_gateways": {
+      "gpay_upi_qr": "Interactive GPay / PhonePe / Paytm UPI QR modal with transaction ID input & screenshot file uploader",
+      "whatsapp_workflow": "Direct click-to-send booking confirmation to +91 9876543210 with pre-filled guest details & stay dates"
+    },
+    "host_dashboard": {
+      "calendar_controls": "Interactive calendar to select dates to block/unblock, rate override per date, approve/reject pending bookings",
+      "analytics_cards": "Total Revenue, Occupancy Rate, Pending Approvals, Upcoming Check-ins"
+    }
+  },
+  "image_urls": {
+    "hero_and_gallery": [
+      {
+        "url": "https://images.unsplash.com/photo-1782022536202-7adbb78756ff?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "title": "Master Himalayan View Suite",
+        "category": "hero_main"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1757924461488-ef9ad0670978?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "title": "Living Lounge & Sunlit Dining",
+        "category": "hero_grid_2"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1778205015308-1ed324aea202?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "title": "Serene Guest Bedroom",
+        "category": "hero_grid_3"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1782022536329-57cd35c82d9f?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "title": "Private Terrace Dining Overlook",
+        "category": "hero_grid_4"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1648881806148-e5c51179c826?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "title": "Chandelier Evening Ambience",
+        "category": "hero_grid_5"
+      }
+    ],
+    "amenities_and_lifestyle": [
+      {
+        "url": "https://images.unsplash.com/photo-1790364754575-4e55e91c93bf?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "title": "Morning Coffee Terrace",
+        "category": "amenity"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1688646953306-5ec93eab8c06?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "title": "Gourmet Modular Kitchen",
+        "category": "amenity"
+      }
+    ],
+    "host_avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "qr_codes": {
+      "gpay_upi_qr": "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=nestavia@upi&pn=Nestavia%20Zirakpur&cu=INR",
+      "instagram_qr": "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://instagram.com/nestavia.zirakpur"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Build the complete direct-booking web application with a responsive Navbar, 5-photo Airbnb hero grid, dynamic booking engine, GPay/UPI payment modal, guest review section, floating WhatsApp widget, post-booking location privacy state, and host dashboard tab/portal.",
+    "Implement accurate price calculations based on base rate ₹2400, extra guests (₹500/night for guests 3 & 4), weekend markups (15% on Fri/Sat), and last-minute discount (10% if check-in < 48 hours).",
+    "Implement down-payment logic (70% partial vs 100% full option if booking is >= 7 days away; strictly force 100% full payment if check-in is within 6 days).",
+    "Implement post-booking location privacy: display exact address as 'Hidden until host approval' on the public page, and reveal exact address and landmark once host approves in dashboard or mock approval button.",
+    "Add interactive GPay/UPI payment modal with real-time QR code rendering, reference ID field, screenshot upload simulation, and instant WhatsApp confirmation link generator.",
+    "Add a dedicated Host Dashboard route/tab with booking approval management, calendar rate overriding, date blocking/unblocking, and financial analytics.",
+    "Ensure all interactive elements have explicit data-testid attributes for automated testing."
+  ]
+}
