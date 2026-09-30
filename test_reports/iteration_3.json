@@ -1,0 +1,33 @@
+{
+  "summary": "Iteration 3 verified 4 new features: (1) GET /api/host/insights returns 9 months with keys key/month/nights/earnings/occupancy — host 200, guest 403; a confirmed booking (2 nights) increments the check-in month's nights by 2 and earnings by amount_due. (2) GET /api/bookings/{id}/receipt.pdf returns application/pdf starting with %PDF for owner and host, 404 for another guest. (3) PUT /api/host/listing filters instagram_posts to only https://www.instagram.com/ URLs (evil.com stripped); description/amenities/house_rules unchanged; listing restored to [] afterwards. (4) Frontend Home shows instagram-section with insta-posts-link (…/Nestavia_stays/), insta-reels-link (…/reels/), insta-profile-card, insta-empty when no posts; after host saves an instagram URL via listing-instagram-input + save-listing-btn, home renders insta-embed with iframe src ending /embed; reverted. (5) Home enquiry-section: name/dates/guests=3/question → enquiry-whatsapp-btn href contains wa.me/918802757866 + URL-encoded 'John Tester', 'Guests%3A%203', question text. (6) Host dashboard: occupancy-insights renders with recharts SVG, insights-total-nights + insights-total-earnings, three insight-month-* tiles. (7) Guest /my-bookings: download-receipt-btn-{id} click yields network response 200 application/pdf %PDF. (8) Regression: quote-total renders; mobile 390px home has 0px horizontal overflow.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Home enquiry / any select", "issues": ["React hydration warning: '<span> cannot be a child of <option>' — likely coming from a select's <option> being wrapped by some component (not blocking). Investigate EnquiryForm.jsx / any Select rendering."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration3.py",
+    "/app/test_reports/pytest/iter3.xml"
+  ],
+  "action_items": [
+    "(Low) Investigate React hydration warning about <span> child of <option> element seen on home page. Non-blocking — but should be fixed for a clean console.",
+    "(Low, recharts warning) OccupancyInsights emits 'width(-1) height(-1)' warnings on first paint — chart still renders but consider giving ResponsiveContainer an explicit min height or check parent layout timing."
+  ],
+  "critical_code_review_comments": [
+    "server.py host_insights: per_night = paid / (nights) means for 'confirmed' bookings we distribute amount_due (down-payment) across nights, but the spec says earnings should grow by amount_due for the CHECK-IN month specifically. Because bookings that span multiple months would have their amount_due split across months, this works correctly ONLY when the booking is entirely within one month (which is the case for 2-night bookings inside the checked month). Note this as a nuance for multi-month stays.",
+    "server.py booking_receipt: builds a synchronous PDF via reportlab in the request thread — acceptable for MVP but consider offloading if load rises.",
+    "InstagramGallery.jsx uses posts.slice(0,6).map + `${u.replace(/\\/?(\\?.*)?$/, \"\")}/embed` — regex is fragile for URLs already containing '/embed' or query strings. Simple trailing-slash normalization would be clearer.",
+    "ListingEditor split('\\n') for instagram_posts is fine but empty lines become empty strings; backend already trims — acceptable."
+  ],
+  "updated_files": ["/app/backend/tests/test_iteration3.py"],
+  "success_rate": {"backend": "100% (5/5 iter3 tests)", "frontend": "100% (7/7 UI checks)"},
+  "test_credentials": "Host sweetguru88@gmail.com / Nestavia@2026. Iter3 UI guest was created and its booking cancelled at end of test.",
+  "seed_data_creation": "Test bookings created & cancelled in the same run; listing_settings.instagram_posts restored to [] at end. No residual test data.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Run backend: `export REACT_APP_BACKEND_URL=https://nestavia-booking.preview.emergentagent.com && python -m pytest backend/tests/test_iteration3.py -o addopts='' -v`. All prior iterations remain green. New data-testids verified: occupancy-insights, insights-total-nights, insights-total-earnings, insight-month-{key}, instagram-section, insta-posts-link, insta-reels-link, insta-profile-card, insta-empty, insta-embed, enquiry-section, enquiry-name-input, enquiry-checkin-input, enquiry-checkout-input, enquiry-guests-select, enquiry-question-input, enquiry-whatsapp-btn, listing-instagram-input, download-receipt-btn-{id}. Console has a persistent hydration warning about <span> child of <option> — likely a shadcn/radix Select vs native <select> issue somewhere. Not blocking.",
+  "rca of the issue": "No blocking bugs."
+}
