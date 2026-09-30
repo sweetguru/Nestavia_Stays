@@ -5,11 +5,11 @@ import { toast } from "sonner";
 export const ListingEditor = () => {
   const [f, setF] = useState(null);
   const [busy, setBusy] = useState(false);
-  useEffect(() => { api.get("/property").then((r) => setF({ description: r.data.description, amenities: r.data.amenities.join("\n"), house_rules: r.data.house_rules.join("\n") })); }, []);
+  useEffect(() => { api.get("/property").then((r) => setF({ description: r.data.description, amenities: r.data.amenities.join("\n"), house_rules: r.data.house_rules.join("\n"), instagram_posts: (r.data.instagram_posts || []).join("\n") })); }, []);
   const save = async () => {
     setBusy(true);
     try {
-      await api.put("/host/listing", { description: f.description, amenities: f.amenities.split("\n"), house_rules: f.house_rules.split("\n") });
+      await api.put("/host/listing", { description: f.description, amenities: f.amenities.split("\n"), house_rules: f.house_rules.split("\n"), instagram_posts: f.instagram_posts.split("\n") });
       toast.success("Listing updated — changes are live");
     } catch (e) { toast.error(errMsg(e)); } finally { setBusy(false); }
   };
@@ -26,6 +26,9 @@ export const ListingEditor = () => {
       </label>
       <label className="block mt-3 text-xs font-semibold text-[#3D5A45]">House rules
         <textarea data-testid="listing-rules-input" rows={4} value={f.house_rules} onChange={(e) => setF({ ...f, house_rules: e.target.value })} className={inp} />
+      </label>
+      <label className="block mt-3 text-xs font-semibold text-[#3D5A45]">Instagram post / reel links (shown on home page)
+        <textarea data-testid="listing-instagram-input" rows={3} placeholder={"https://www.instagram.com/p/XXXX/\nhttps://www.instagram.com/reel/XXXX/"} value={f.instagram_posts} onChange={(e) => setF({ ...f, instagram_posts: e.target.value })} className={inp} />
       </label>
       <button data-testid="save-listing-btn" disabled={busy} onClick={save} className="btn-emerald px-5 py-2.5 mt-4 text-xs disabled:opacity-50">{busy ? "Saving…" : "Save listing"}</button>
     </div>

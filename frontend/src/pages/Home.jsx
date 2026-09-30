@@ -6,6 +6,8 @@ import { BookingWidget } from "@/components/BookingWidget";
 import { Reviews } from "@/components/Reviews";
 import { Footer } from "@/components/Footer";
 import { ShareButton } from "@/components/ShareButton";
+import { InstagramGallery } from "@/components/InstagramGallery";
+import { EnquiryForm } from "@/components/EnquiryForm";
 import { MapPin, Users, BedDouble, Bath, Wifi, Snowflake, Tv, UtensilsCrossed, ShieldAlert, Lock, Mountain, Sparkles } from "lucide-react";
 
 const ICONS = [["wifi", Wifi], ["air", Snowflake], ["ac", Snowflake], ["tv", Tv], ["kitchen", UtensilsCrossed], ["shower", Bath], ["geyser", Bath], ["balcony", Mountain], ["view", Mountain], ["bed", BedDouble]];
@@ -83,6 +85,8 @@ export default function Home() {
             </section>
 
             <Reviews data={reviews} />
+            <InstagramGallery posts={property.instagram_posts} />
+            <EnquiryForm property={property} />
           </div>
           <BookingWidget property={property} />
         </div>

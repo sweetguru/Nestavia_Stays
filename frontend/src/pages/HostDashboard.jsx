@@ -4,6 +4,7 @@ import { HostCalendar } from "@/components/HostCalendar";
 import { BookingQueue } from "@/components/BookingQueue";
 import { CheckinReminders } from "@/components/CheckinReminders";
 import { ListingEditor } from "@/components/ListingEditor";
+import { OccupancyInsights } from "@/components/OccupancyInsights";
 import { Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
 
@@ -41,6 +42,7 @@ export default function HostDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 grid lg:grid-cols-[1fr_420px] gap-8">
           <section>
             <div className="mb-6"><CheckinReminders bookings={bookings} /></div>
+            <div className="mb-6"><OccupancyInsights /></div>
             <div className="flex flex-wrap items-center gap-2 mb-5">
               {["pending", "confirmed", "completed", "cancelled", "rejected", "all"].map((f) => <button key={f} data-testid={`filter-${f}`} onClick={() => setFilter(f)} className={`px-4 py-1.5 rounded-full text-xs font-semibold capitalize transition-colors ${filter === f ? "bg-[#0F281E] text-white" : "bg-white border border-[#E8E2D2] text-[#3D5A45]"}`}>{f}</button>)}
             </div>

@@ -391,16 +391,18 @@ class ListingInput(BaseModel):
     description: str
     amenities: List[str]
     house_rules: List[str]
+    instagram_posts: List[str] = []
 
 
 async def get_listing() -> dict:
     doc = await db.listing_settings.find_one({"key": "listing"}, {"_id": 0, "key": 0})
-    return {**DEFAULT_LISTING, **(doc or {})}
+    return {**DEFAULT_LISTING, "instagram_posts": [], **(doc or {})}
 
 
 @api_router.put("/host/listing")
 async def update_listing(body: ListingInput, host: dict = Depends(require_host)):
-    data = {"description": body.description.strip(), "amenities": [a.strip() for a in body.amenities if a.strip()], "house_rules": [r.strip() for r in body.house_rules if r.strip()]}
+    data = {"description": body.description.strip(), "amenities": [a.strip() for a in body.amenities if a.strip()], "house_rules": [r.strip() for r in body.house_rules if r.strip()],
+            "instagram_posts": [u.strip() for u in body.instagram_posts if u.strip().startswith("https://www.instagram.com/")]}
     await db.listing_settings.update_one({"key": "listing"}, {"$set": data}, upsert=True)
     return {"listing": data}
 
@@ -679,6 +681,81 @@ async def host_stats(host: dict = Depends(require_host)):
         elif bk.get("status") == "pending":
             pending += 1
     return {"total_revenue": total_revenue, "pending": pending, "confirmed": confirmed, "upcoming": upcoming}
+
+
+@api_router.get("/host/insights")
+async def host_insights(host: dict = Depends(require_host)):
+    from calendar import monthrange
+    today = date.today()
+    months = []
+    for k in range(-5, 4):
+        m = today.month + k
+        y = today.year + (m - 1) // 12
+        m = (m - 1) % 12 + 1
+        months.append((y, m))
+    data = {f"{y}-{m:02d}": {"month": date(y, m, 1).strftime("%b %y"), "nights": 0, "earnings": 0, "days": monthrange(y, m)[1]} for y, m in months}
+    async for bk in db.bookings.find({"status": {"$in": ["confirmed", "completed"]}}):
+        d = date.fromisoformat(bk["check_in"]); end = date.fromisoformat(bk["check_out"])
+        paid = bk.get("total", 0) if bk["status"] == "completed" else bk.get("amount_due", 0)
+        per_night = paid / max(1, (end - d).days)
+        while d < end:
+            key = d.strftime("%Y-%m")
+            if key in data:
+                data[key]["nights"] += 1
+                data[key]["earnings"] += per_night
+            d += timedelta(days=1)
+    out = []
+    for key in sorted(data):
+        v = data[key]
+        out.append({"key": key, "month": v["month"], "nights": v["nights"], "earnings": round(v["earnings"]), "occupancy": round(v["nights"] * 100 / v["days"])})
+    return {"months": out}
+
+
+@api_router.get("/bookings/{booking_id}/receipt.pdf")
+async def booking_receipt(booking_id: str, user: dict = Depends(get_current_user)):
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib import colors
+    from reportlab.pdfgen import canvas
+    from io import BytesIO
+    bk = await db.bookings.find_one({"id": booking_id})
+    if not bk or (user.get("role") != "host" and bk["user_id"] != str(user["_id"])):
+        raise HTTPException(status_code=404, detail="Booking not found")
+    buf = BytesIO(); c = canvas.Canvas(buf, pagesize=A4); W, H = A4
+    emerald, gold = colors.HexColor("#0F281E"), colors.HexColor("#C5A059")
+    c.setFillColor(emerald); c.rect(0, H - 120, W, 120, fill=1, stroke=0)
+    c.setFillColor(gold); c.setFont("Times-Bold", 26); c.drawString(40, H - 60, "Nestavia Zirakpur")
+    c.setFillColor(colors.white); c.setFont("Helvetica", 11); c.drawString(40, H - 80, "The Himalayan Gateway  |  Where Every Journey Begins in Comfort")
+    c.setFont("Helvetica-Bold", 12); c.drawRightString(W - 40, H - 60, "BOOKING RECEIPT")
+    c.setFont("Helvetica", 9); c.drawRightString(W - 40, H - 78, f"Ref: {bk['id'][:8].upper()}  |  Status: {bk['status'].upper()}")
+    y = H - 160
+    def row(label, value, bold=False):
+        nonlocal y
+        c.setFillColor(colors.HexColor("#5A655D")); c.setFont("Helvetica", 10); c.drawString(40, y, label)
+        c.setFillColor(emerald); c.setFont("Helvetica-Bold" if bold else "Helvetica", 10); c.drawRightString(W - 40, y, str(value)); y -= 20
+    def section(t):
+        nonlocal y
+        y -= 8; c.setFillColor(gold); c.setFont("Helvetica-Bold", 9); c.drawString(40, y, t.upper()); y -= 6
+        c.setStrokeColor(gold); c.line(40, y, W - 40, y); y -= 18
+    section("Guest"); row("Name", bk["guest_name"]); row("Email", bk["guest_email"]); row("Phone", bk["guest_phone"])
+    section("Stay"); row("Check-in", f"{bk['check_in']} (from 2:00 PM)"); row("Check-out", f"{bk['check_out']} (by 11:00 AM)"); row("Nights", bk["num_nights"]); row("Guests", bk["guests"])
+    q = bk.get("quote", {})
+    section("Charges")
+    row(f"Room ({bk['num_nights']} nights)", f"Rs {q.get('room_subtotal', 0):,}")
+    if q.get("weekend_markup_total"): row("Weekend markup (Fri/Sat +15%)", f"Rs {q['weekend_markup_total']:,}")
+    if q.get("extra_guest_total"): row("Extra guest fee", f"Rs {q['extra_guest_total']:,}")
+    if q.get("last_minute_discount"): row("Last-minute discount (10%)", f"- Rs {q['last_minute_discount']:,}")
+    row("Total", f"Rs {bk['total']:,}", bold=True)
+    section("Payment")
+    row("Payment plan", "70% down-payment" if bk["payment_option"] == "partial" else "Full payment")
+    row("Amount paid via UPI", f"Rs {bk['amount_due']:,}", bold=True); row("UPI transaction ref", bk["transaction_ref"])
+    row("Balance payable at check-in", f"Rs {bk['balance_due']:,}")
+    if bk["status"] in ("confirmed", "completed"):
+        section("Location"); c.setFillColor(emerald); c.setFont("Helvetica", 10); c.drawString(40, y, PROPERTY["secret_address"]); y -= 16; c.drawString(40, y, PROPERTY["secret_maps"]); y -= 20
+    y -= 10; c.setFillColor(colors.HexColor("#5A655D")); c.setFont("Helvetica-Oblique", 8)
+    c.drawString(40, y, PROPERTY["house_rule"]); y -= 12
+    c.drawString(40, y, f"Host: {PROPERTY['host_name']}  |  WhatsApp +91 88027 57866  |  Instagram @{PROPERTY['instagram']}  |  Generated {datetime.now(timezone.utc).strftime('%d %b %Y')}")
+    c.showPage(); c.save()
+    return StarletteResponse(content=buf.getvalue(), media_type="application/pdf", headers={"Content-Disposition": f'attachment; filename="nestavia-receipt-{bk["id"][:8]}.pdf"'})
 
 
 # ---------------------------------------------------------------------------

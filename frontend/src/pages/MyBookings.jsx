@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { api, inr, fmtDate, errMsg, waLink } from "@/lib/api";
 import { Stars } from "@/components/Reviews";
-import { MapPin, Lock, ExternalLink, MessageCircle } from "lucide-react";
+import { MapPin, Lock, ExternalLink, MessageCircle, FileDown } from "lucide-react";
 import { toast } from "sonner";
+
+const downloadReceipt = async (id) => {
+  try {
+    const r = await api.get(`/bookings/${id}/receipt.pdf`, { responseType: "blob" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(r.data); a.download = `nestavia-receipt-${id.slice(0, 8)}.pdf`; a.click(); URL.revokeObjectURL(a.href);
+  } catch (e) { toast.error(errMsg(e)); }
+};
 
 const STATUS = { pending: "bg-amber-100 text-amber-800", confirmed: "bg-green-100 text-green-800", completed: "bg-[#0F281E] text-[#E6C687]", cancelled: "bg-gray-200 text-gray-700", rejected: "bg-red-100 text-red-700" };
 
@@ -59,7 +66,8 @@ const BookingCard = ({ b, onCancel, onReviewed }) => {
       ) : b.status === "pending" ? (
         <div data-testid={`booking-address-locked-${b.id}`} className="mt-6 rounded-xl bg-[#F0F4F1] p-5 text-sm text-[#3D5A45] flex items-center gap-3"><Lock size={16} className="text-[#C5A059]" /> Exact address & map unlock once the host verifies your payment.</div>
       ) : null}
-      {(b.status === "pending" || b.status === "confirmed") && <button data-testid={`cancel-booking-btn-${b.id}`} onClick={() => onCancel(b.id)} className="mt-5 text-xs text-red-600 hover:underline">Cancel booking</button>}
+      {(b.status === "pending" || b.status === "confirmed") && <button data-testid={`cancel-booking-btn-${b.id}`} onClick={() => onCancel(b.id)} className="mt-5 mr-4 text-xs text-red-600 hover:underline">Cancel booking</button>}
+      <button data-testid={`download-receipt-btn-${b.id}`} onClick={() => downloadReceipt(b.id)} className="mt-5 inline-flex items-center gap-1.5 text-xs text-[#0F281E] font-semibold hover:underline"><FileDown size={14} /> Download PDF receipt</button>
       {b.status === "completed" && !b.reviewed && (
         <div data-testid={`review-form-${b.id}`} className="mt-6 border-t border-[#E8E2D2] pt-5">
           <p className="font-semibold text-[#0F281E] text-sm">How was your stay?</p>
