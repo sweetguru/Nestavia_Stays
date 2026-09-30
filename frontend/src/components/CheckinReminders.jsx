@@ -1,6 +1,6 @@
 import { fmtDate, inr, waLink } from "@/lib/api";
-import { reminderMessage, guestPhone } from "@/components/BookingQueue";
-import { BellRing, MessageCircle } from "lucide-react";
+import { reminderMessage, balanceMessage, guestPhone } from "@/components/BookingQueue";
+import { BellRing, MessageCircle, Wallet } from "lucide-react";
 
 const hoursUntil = (s) => (new Date(`${s}T14:00:00`) - Date.now()) / 36e5;
 
@@ -23,7 +23,10 @@ export const CheckinReminders = ({ bookings }) => {
                   <div className="font-semibold text-sm text-[#0F281E]">{b.guest_name} · {b.guests} guest{b.guests > 1 ? "s" : ""}</div>
                   <div className="text-xs text-[#5A655D]">{fmtDate(b.check_in)} · {h <= 0 ? "checking in today" : `in ${Math.ceil(h)}h`}{b.balance_due > 0 ? ` · collect ${inr(b.balance_due)}` : ""}</div>
                 </div>
-                <a data-testid={`reminder-whatsapp-${b.id}`} href={waLink(guestPhone(b.guest_phone), reminderMessage(b))} target="_blank" rel="noreferrer" className="px-3 py-1.5 text-xs rounded-full bg-[#25D366] text-white inline-flex items-center gap-1.5 font-semibold"><MessageCircle size={13} /> Send reminder</a>
+                <div className="flex gap-2">
+                  {b.balance_due > 0 && <a data-testid={`reminder-balance-${b.id}`} href={waLink(guestPhone(b.guest_phone), balanceMessage(b))} target="_blank" rel="noreferrer" className="px-3 py-1.5 text-xs rounded-full bg-[#C5A059] text-[#0F281E] inline-flex items-center gap-1.5 font-semibold"><Wallet size={13} /> Balance</a>}
+                  <a data-testid={`reminder-whatsapp-${b.id}`} href={waLink(guestPhone(b.guest_phone), reminderMessage(b))} target="_blank" rel="noreferrer" className="px-3 py-1.5 text-xs rounded-full bg-[#25D366] text-white inline-flex items-center gap-1.5 font-semibold"><MessageCircle size={13} /> Send reminder</a>
+                </div>
               </li>
             );
           })}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { api, inr, fmtDate, errMsg, waLink } from "@/lib/api";
-import { MessageCircle, Receipt, Check, X, Flag, Star } from "lucide-react";
+import { MessageCircle, Receipt, Check, X, Flag, Star, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 const ADDRESS = "Unit No. 1001, 10th Floor, Maya Garden Magnesia Tower-1, PR-7 Airport road, ZIRAKPUR, PUNJAB 140603";
@@ -15,6 +15,9 @@ export const reviewRequestMessage = (b) =>
 
 export const reminderMessage = (b) =>
   `Hi ${b.guest_name}! 🌿 Gentle reminder — your stay at Nestavia Zirakpur begins ${fmtDate(b.check_in)} (check-in from 2 PM).\n\n📍 ${ADDRESS}\n🗺️ ${MAPS}\n\nPlease carry a government ID for every guest${b.balance_due > 0 ? ` and the balance of ${inr(b.balance_due)} payable at check-in` : ""}. Reply here if you need anything! — Dr. Gurpreet Kaur`;
+
+export const balanceMessage = (b) =>
+  `Hi ${b.guest_name}! 🌿 Looking forward to hosting you at Nestavia Zirakpur on ${fmtDate(b.check_in)}.\n\nA quick reminder that the remaining balance of ${inr(b.balance_due)} is due before check-in.\n\n💳 Pay via GPay / any UPI app to: sweetguru88@okicici\nPlease share the payment screenshot here once done.\n\nThank you! — Dr. Gurpreet Kaur`;
 
 export const guestPhone = phone;
 
@@ -45,6 +48,7 @@ export const BookingQueue = ({ bookings, reload, filter }) => {
             </>}
             {b.status === "confirmed" && <>
               <a data-testid={`whatsapp-confirm-btn-${b.id}`} href={waLink(phone(b.guest_phone), approvalMessage(b))} target="_blank" rel="noreferrer" className="px-4 py-2 text-xs rounded-full bg-[#25D366] text-white inline-flex items-center gap-1.5 font-semibold"><MessageCircle size={14} /> Send WhatsApp confirmation</a>
+              {b.balance_due > 0 && <a data-testid={`balance-reminder-btn-${b.id}`} href={waLink(phone(b.guest_phone), balanceMessage(b))} target="_blank" rel="noreferrer" className="px-4 py-2 text-xs rounded-full bg-[#C5A059] text-[#0F281E] inline-flex items-center gap-1.5 font-semibold"><Wallet size={14} /> Remind balance {inr(b.balance_due)}</a>}
               <button data-testid={`complete-btn-${b.id}`} onClick={() => run(api.post(`/bookings/${b.id}/complete`), "Marked as completed")} className="px-4 py-2 text-xs rounded-full border border-[#0F281E] text-[#0F281E] inline-flex items-center gap-1.5"><Flag size={14} /> Mark stay completed</button>
             </>}
             {b.status === "completed" && (

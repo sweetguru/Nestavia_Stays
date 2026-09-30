@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, waLink } from "@/lib/api";
 import { LOGO, GALLERY, WALKTHROUGH_VIDEO } from "@/lib/assets";
 import { HeroGallery } from "@/components/HeroGallery";
 import { BookingWidget } from "@/components/BookingWidget";
@@ -25,6 +25,17 @@ export default function Home() {
   return (
     <>
       <main className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-12">
+        {property.promo_enabled && (
+          <div data-testid="promo-banner" className="rise relative grain overflow-hidden mb-8 rounded-2xl bg-[#0F281E] text-white px-6 py-5 sm:px-8 flex flex-wrap items-center gap-4 border border-[#C5A059]/50">
+            <span className="h-11 w-11 rounded-full bg-[#C5A059] text-[#0F281E] flex items-center justify-center shrink-0"><Sparkles size={20} /></span>
+            <div className="flex-1 min-w-[200px]">
+              <p className="eyebrow !text-[10px]">Special offer</p>
+              <h3 data-testid="promo-title" className="font-serif text-xl sm:text-2xl font-semibold text-[#E6C687] leading-tight">{property.promo_title}</h3>
+              {property.promo_text && <p data-testid="promo-text" className="text-sm text-white/80 mt-1">{property.promo_text}</p>}
+            </div>
+            <a data-testid="promo-whatsapp-btn" href={waLink(property.host_whatsapp, `Hi ${property.host_name}, I'd like to book Nestavia Zirakpur with the offer "${property.promo_title}". Which dates are available?`)} target="_blank" rel="noreferrer" className="btn-gold px-5 py-2.5 text-xs">Claim on WhatsApp</a>
+          </div>
+        )}
         <div className="rise">
           <p className="eyebrow">Zirakpur · Punjab · Direct booking</p>
           <h1 data-testid="property-title" className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0F281E] mt-2">{property.name}</h1>

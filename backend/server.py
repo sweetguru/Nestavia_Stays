@@ -392,17 +392,21 @@ class ListingInput(BaseModel):
     amenities: List[str]
     house_rules: List[str]
     instagram_posts: List[str] = []
+    promo_enabled: bool = False
+    promo_title: str = ""
+    promo_text: str = ""
 
 
 async def get_listing() -> dict:
     doc = await db.listing_settings.find_one({"key": "listing"}, {"_id": 0, "key": 0})
-    return {**DEFAULT_LISTING, "instagram_posts": [], **(doc or {})}
+    return {**DEFAULT_LISTING, "instagram_posts": [], "promo_enabled": False, "promo_title": "", "promo_text": "", **(doc or {})}
 
 
 @api_router.put("/host/listing")
 async def update_listing(body: ListingInput, host: dict = Depends(require_host)):
     data = {"description": body.description.strip(), "amenities": [a.strip() for a in body.amenities if a.strip()], "house_rules": [r.strip() for r in body.house_rules if r.strip()],
-            "instagram_posts": [u.strip() for u in body.instagram_posts if u.strip().startswith("https://www.instagram.com/")]}
+            "instagram_posts": [u.strip() for u in body.instagram_posts if u.strip().startswith("https://www.instagram.com/")],
+            "promo_enabled": body.promo_enabled and bool(body.promo_title.strip()), "promo_title": body.promo_title.strip(), "promo_text": body.promo_text.strip()}
     await db.listing_settings.update_one({"key": "listing"}, {"$set": data}, upsert=True)
     return {"listing": data}
 
