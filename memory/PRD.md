@@ -33,6 +33,8 @@ auth/register|login|logout|me · property · pricing/quote · availability · up
 
 - 2026-06 (iteration 4, self-tested): host-editable Special Offer banner on home (promo_enabled/title/text in listing_settings, 'Claim on WhatsApp' CTA); one-tap WhatsApp balance reminder on confirmed bookings with balance_due>0 (queue + 48h reminders card)
 
+- 2026-06: Self check-in highlighted everywhere — header badge, host card, amenity, house rule, WhatsApp confirmation/reminder messages, quick-reply template, PDF receipt
+
 ## Backlog
 - P1: Email notifications on booking status change (needs provider)
 - P2: Multi-photo receipt upload, booking search/filter by date

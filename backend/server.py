@@ -377,11 +377,11 @@ async def me(user: dict = Depends(get_current_user)):
 # ---------------------------------------------------------------------------
 DEFAULT_LISTING = {
     "description": "A private, tastefully-designed 1BHK apartment on the 10th floor — bright master bedroom opening onto a sunlit balcony, a lounge dressed with pop-art and velvet seating, a mosaic-tiled modular kitchen, and a spa-style bathroom. Perfectly placed near Chandigarh airport as your gateway to Shimla, Kasauli and the Himalayas.",
-    "amenities": ["High-speed Wi-Fi", "Air conditioning", "Smart TV", "Fully-equipped kitchen", "Geyser & rain shower", "Balcony with open views", "King-size bed", "Daily-cleaned linens"],
+    "amenities": ["High-speed Wi-Fi", "Air conditioning", "Smart TV", "Fully-equipped kitchen", "Geyser & rain shower", "Balcony with open views", "King-size bed", "Daily-cleaned linens", "Self check-in (smart lock)"],
     "house_rules": [
         "Maximum 4 guests — strictly enforced.",
         PROPERTY["house_rule"],
-        "Check-in 2:00 PM · Check-out 11:00 AM.",
+        "Self check-in from 2:00 PM · Check-out 11:00 AM.",
         "Government ID required for all guests at arrival.",
     ],
 }
@@ -741,7 +741,7 @@ async def booking_receipt(booking_id: str, user: dict = Depends(get_current_user
         y -= 8; c.setFillColor(gold); c.setFont("Helvetica-Bold", 9); c.drawString(40, y, t.upper()); y -= 6
         c.setStrokeColor(gold); c.line(40, y, W - 40, y); y -= 18
     section("Guest"); row("Name", bk["guest_name"]); row("Email", bk["guest_email"]); row("Phone", bk["guest_phone"])
-    section("Stay"); row("Check-in", f"{bk['check_in']} (from 2:00 PM)"); row("Check-out", f"{bk['check_out']} (by 11:00 AM)"); row("Nights", bk["num_nights"]); row("Guests", bk["guests"])
+    section("Stay"); row("Check-in", f"{bk['check_in']} (self check-in from 2:00 PM)"); row("Check-out", f"{bk['check_out']} (by 11:00 AM)"); row("Nights", bk["num_nights"]); row("Guests", bk["guests"])
     q = bk.get("quote", {})
     section("Charges")
     row(f"Room ({bk['num_nights']} nights)", f"Rs {q.get('room_subtotal', 0):,}")
@@ -794,7 +794,7 @@ async def delete_quick_reply(qid: str, host: dict = Depends(require_host)):
 # Startup
 # ---------------------------------------------------------------------------
 DEFAULT_TEMPLATES = [
-    {"title": "Check-in Instructions", "message": "Hello! Warm welcome to Nestavia Zirakpur. Your check-in is from 2 PM. Please share your ID on arrival. Reach out anytime — Dr. Gurpreet Kaur."},
+    {"title": "Check-in Instructions", "message": "Hello! Warm welcome to Nestavia Zirakpur. Self check-in is available from 2 PM — your door access code will be shared here before arrival. Please keep your ID handy. Reach out anytime — Dr. Gurpreet Kaur."},
     {"title": "Directions", "message": "Here is the exact location for your confirmed stay: Unit No. 1001, 10th Floor, Maya Garden Magnesia Tower-1, PR-7 Airport road, ZIRAKPUR, PUNJAB 140603. Map: https://maps.app.goo.gl/Qb1YFdH2ay7NKLwY6"},
     {"title": "Thank You", "message": "Thank you for staying at Nestavia! We'd love a review on Instagram @Nestavia_stays. Safe travels!"},
 ]

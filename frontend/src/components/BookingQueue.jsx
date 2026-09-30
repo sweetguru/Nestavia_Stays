@@ -8,13 +8,13 @@ const MAPS = "https://maps.app.goo.gl/Qb1YFdH2ay7NKLwY6";
 const phone = (p) => (p || "").replace(/\D/g, "").replace(/^(\d{10})$/, "91$1");
 
 export const approvalMessage = (b) =>
-  `Hello ${b.guest_name}! 🌿 Your booking at Nestavia Zirakpur - The Himalayan Gateway is CONFIRMED.\n\n📅 ${fmtDate(b.check_in)} → ${fmtDate(b.check_out)} · ${b.guests} guest(s)\n💰 Paid: ${inr(b.amount_due)}${b.balance_due > 0 ? ` · Balance at check-in: ${inr(b.balance_due)}` : ""}\n\n📍 Exact location: ${ADDRESS}\n🗺️ Map: ${MAPS}\n\n🕑 Check-in 2 PM · Check-out 11 AM. Please carry a government ID for every guest. Strict policy: no unregistered guests.\n\nSee you soon! — Dr. Gurpreet Kaur`;
+  `Hello ${b.guest_name}! 🌿 Your booking at Nestavia Zirakpur - The Himalayan Gateway is CONFIRMED.\n\n📅 ${fmtDate(b.check_in)} → ${fmtDate(b.check_out)} · ${b.guests} guest(s)\n💰 Paid: ${inr(b.amount_due)}${b.balance_due > 0 ? ` · Balance at check-in: ${inr(b.balance_due)}` : ""}\n\n📍 Exact location: ${ADDRESS}\n🗺️ Map: ${MAPS}\n\n🔑 Self check-in from 2 PM · Check-out 11 AM. Your door access code will be shared here before arrival. Please carry a government ID for every guest. Strict policy: no unregistered guests.\n\nSee you soon! — Dr. Gurpreet Kaur`;
 
 export const reviewRequestMessage = (b) =>
   `Hi ${b.guest_name}! 🌿 Thank you for staying at Nestavia Zirakpur - The Himalayan Gateway. We hope you had a comfortable stay!\n\nIt would mean a lot if you could leave a quick review:\n⭐ On our website: ${window.location.origin}/my-bookings\n📸 On Instagram: https://instagram.com/Nestavia_stays\n\nSee you again soon! — Dr. Gurpreet Kaur`;
 
 export const reminderMessage = (b) =>
-  `Hi ${b.guest_name}! 🌿 Gentle reminder — your stay at Nestavia Zirakpur begins ${fmtDate(b.check_in)} (check-in from 2 PM).\n\n📍 ${ADDRESS}\n🗺️ ${MAPS}\n\nPlease carry a government ID for every guest${b.balance_due > 0 ? ` and the balance of ${inr(b.balance_due)} payable at check-in` : ""}. Reply here if you need anything! — Dr. Gurpreet Kaur`;
+  `Hi ${b.guest_name}! 🌿 Gentle reminder — your stay at Nestavia Zirakpur begins ${fmtDate(b.check_in)} (self check-in from 2 PM — your door access code follows in this chat).\n\n📍 ${ADDRESS}\n🗺️ ${MAPS}\n\nPlease carry a government ID for every guest${b.balance_due > 0 ? ` and the balance of ${inr(b.balance_due)} payable at check-in` : ""}. Reply here if you need anything! — Dr. Gurpreet Kaur`;
 
 export const balanceMessage = (b) =>
   `Hi ${b.guest_name}! 🌿 Looking forward to hosting you at Nestavia Zirakpur on ${fmtDate(b.check_in)}.\n\nA quick reminder that the remaining balance of ${inr(b.balance_due)} is due before check-in.\n\n💳 Pay via GPay / any UPI app to: sweetguru88@okicici\nPlease share the payment screenshot here once done.\n\nThank you! — Dr. Gurpreet Kaur`;

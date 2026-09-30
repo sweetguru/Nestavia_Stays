@@ -8,9 +8,9 @@ import { Footer } from "@/components/Footer";
 import { ShareButton } from "@/components/ShareButton";
 import { InstagramGallery } from "@/components/InstagramGallery";
 import { EnquiryForm } from "@/components/EnquiryForm";
-import { MapPin, Users, BedDouble, Bath, Wifi, Snowflake, Tv, UtensilsCrossed, ShieldAlert, Lock, Mountain, Sparkles } from "lucide-react";
+import { MapPin, Users, BedDouble, Bath, Wifi, Snowflake, Tv, UtensilsCrossed, ShieldAlert, Lock, Mountain, Sparkles, KeyRound } from "lucide-react";
 
-const ICONS = [["wifi", Wifi], ["air", Snowflake], ["ac", Snowflake], ["tv", Tv], ["kitchen", UtensilsCrossed], ["shower", Bath], ["geyser", Bath], ["balcony", Mountain], ["view", Mountain], ["bed", BedDouble]];
+const ICONS = [["self check", KeyRound], ["wifi", Wifi], ["air", Snowflake], ["ac", Snowflake], ["tv", Tv], ["kitchen", UtensilsCrossed], ["shower", Bath], ["geyser", Bath], ["balcony", Mountain], ["view", Mountain], ["bed", BedDouble]];
 const iconFor = (t) => (ICONS.find(([k]) => t.toLowerCase().includes(k)) || [null, Sparkles])[1];
 
 export default function Home() {
@@ -46,6 +46,7 @@ export default function Home() {
             <span className="flex items-center gap-1.5"><BedDouble size={15} /> 1 bedroom</span>
             <span className="flex items-center gap-1.5"><Bath size={15} /> 1 bathroom</span>
             <span className="flex items-center gap-1.5"><MapPin size={15} /> {property.public_area.split(" (")[0]}</span>
+            <span data-testid="self-checkin-badge" className="flex items-center gap-1.5 text-[#0F281E] font-semibold"><KeyRound size={15} className="text-[#C5A059]" /> Self check-in</span>
           </div>
         </div>
         <div className="mt-8"><HeroGallery /></div>
@@ -56,6 +57,11 @@ export default function Home() {
               <div className="flex items-center gap-4">
                 <img src={LOGO} alt="Host" className="h-16 w-16 rounded-full ring-2 ring-[#C5A059] object-cover" />
                 <div><h2 className="font-serif text-2xl sm:text-3xl font-semibold text-[#0F281E]">Hosted by {property.host_name}</h2><p className="text-sm text-[#5A655D]">Superhost · Responds within an hour on WhatsApp</p></div>
+              </div>
+              <div data-testid="self-checkin-card" className="mt-6 flex items-start gap-4 rounded-xl bg-[#F0F4F1] border border-[#C5A059]/40 p-4">
+                <span className="h-10 w-10 shrink-0 rounded-full bg-[#0F281E] text-[#E6C687] flex items-center justify-center"><KeyRound size={18} /></span>
+                <div><div className="font-semibold text-[#0F281E] text-sm">Self check-in, at your convenience</div>
+                  <p className="text-sm text-[#5A655D] mt-1">Arrive any time after 2 PM — no waiting for keys. Your door access code and step-by-step entry guide are shared on WhatsApp once your booking is confirmed.</p></div>
               </div>
               <p data-testid="property-description" className="text-base text-[#1A1D1A] leading-relaxed mt-6 whitespace-pre-line">{property.description}</p>
             </section>
