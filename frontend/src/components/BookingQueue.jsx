@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { api, inr, fmtDate, errMsg, waLink } from "@/lib/api";
-import { MessageCircle, Receipt, Check, X, Flag } from "lucide-react";
+import { MessageCircle, Receipt, Check, X, Flag, Star } from "lucide-react";
 import { toast } from "sonner";
 
 const ADDRESS = "Unit No. 1001, 10th Floor, Maya Garden Magnesia Tower-1, PR-7 Airport road, ZIRAKPUR, PUNJAB 140603";
@@ -8,7 +8,15 @@ const MAPS = "https://maps.app.goo.gl/Qb1YFdH2ay7NKLwY6";
 const phone = (p) => (p || "").replace(/\D/g, "").replace(/^(\d{10})$/, "91$1");
 
 export const approvalMessage = (b) =>
-  `Hello ${b.guest_name}! 🌿 Your booking at Nestavia Zirakpur - The Himalayan Gateway is CONFIRMED.\n\n📅 ${fmtDate(b.check_in)} → ${fmtDate(b.check_out)} · ${b.guests} guest(s)\n💰 Paid: ${inr(b.amount_due)}${b.balance_due > 0 ? ` · Balance at check-in: ${inr(b.balance_due)}` : ""}\n\n📍 Exact location: ${ADDRESS}\n🗺️ Map: ${MAPS}\n\n🕑 Check-in 2 PM · Check-out 11 AM. Please carry a government ID for every guest. Strict policy: no unregistered guests.\n\nSee you soon! — Gurpreet Kaur`;
+  `Hello ${b.guest_name}! 🌿 Your booking at Nestavia Zirakpur - The Himalayan Gateway is CONFIRMED.\n\n📅 ${fmtDate(b.check_in)} → ${fmtDate(b.check_out)} · ${b.guests} guest(s)\n💰 Paid: ${inr(b.amount_due)}${b.balance_due > 0 ? ` · Balance at check-in: ${inr(b.balance_due)}` : ""}\n\n📍 Exact location: ${ADDRESS}\n🗺️ Map: ${MAPS}\n\n🕑 Check-in 2 PM · Check-out 11 AM. Please carry a government ID for every guest. Strict policy: no unregistered guests.\n\nSee you soon! — Dr. Gurpreet Kaur`;
+
+export const reviewRequestMessage = (b) =>
+  `Hi ${b.guest_name}! 🌿 Thank you for staying at Nestavia Zirakpur - The Himalayan Gateway. We hope you had a comfortable stay!\n\nIt would mean a lot if you could leave a quick review:\n⭐ On our website: ${window.location.origin}/my-bookings\n📸 On Instagram: https://instagram.com/Nestavia_stays\n\nSee you again soon! — Dr. Gurpreet Kaur`;
+
+export const reminderMessage = (b) =>
+  `Hi ${b.guest_name}! 🌿 Gentle reminder — your stay at Nestavia Zirakpur begins ${fmtDate(b.check_in)} (check-in from 2 PM).\n\n📍 ${ADDRESS}\n🗺️ ${MAPS}\n\nPlease carry a government ID for every guest${b.balance_due > 0 ? ` and the balance of ${inr(b.balance_due)} payable at check-in` : ""}. Reply here if you need anything! — Dr. Gurpreet Kaur`;
+
+export const guestPhone = phone;
 
 const STATUS = { pending: "bg-amber-100 text-amber-800", confirmed: "bg-green-100 text-green-800", completed: "bg-[#0F281E] text-[#E6C687]", cancelled: "bg-gray-200 text-gray-700", rejected: "bg-red-100 text-red-700" };
 
@@ -39,6 +47,9 @@ export const BookingQueue = ({ bookings, reload, filter }) => {
               <a data-testid={`whatsapp-confirm-btn-${b.id}`} href={waLink(phone(b.guest_phone), approvalMessage(b))} target="_blank" rel="noreferrer" className="px-4 py-2 text-xs rounded-full bg-[#25D366] text-white inline-flex items-center gap-1.5 font-semibold"><MessageCircle size={14} /> Send WhatsApp confirmation</a>
               <button data-testid={`complete-btn-${b.id}`} onClick={() => run(api.post(`/bookings/${b.id}/complete`), "Marked as completed")} className="px-4 py-2 text-xs rounded-full border border-[#0F281E] text-[#0F281E] inline-flex items-center gap-1.5"><Flag size={14} /> Mark stay completed</button>
             </>}
+            {b.status === "completed" && (
+              <a data-testid={`review-request-btn-${b.id}`} href={waLink(phone(b.guest_phone), reviewRequestMessage(b))} target="_blank" rel="noreferrer" className="px-4 py-2 text-xs rounded-full bg-[#25D366] text-white inline-flex items-center gap-1.5 font-semibold"><Star size={14} /> {b.reviewed ? "Reviewed ✓ · Ask for Instagram review" : "Request review on WhatsApp"}</a>
+            )}
           </div>
         </article>
       ))}

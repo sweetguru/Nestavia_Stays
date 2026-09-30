@@ -101,7 +101,7 @@ PROPERTY = {
     "partial_percent": 0.70,
     "partial_eligible_days": 7,
     "house_rule": "Strict Policy: No unregistered guests allowed on the premises without prior host notification.",
-    "host_name": "Gurpreet Kaur",
+    "host_name": "Dr. Gurpreet Kaur",
     "host_whatsapp": "918802757866",
     "upi_id": "sweetguru88@okicici",
     "instagram": "Nestavia_stays",
@@ -375,10 +375,42 @@ async def me(user: dict = Depends(get_current_user)):
 # ---------------------------------------------------------------------------
 # Property / pricing / availability
 # ---------------------------------------------------------------------------
+DEFAULT_LISTING = {
+    "description": "A private, tastefully-designed 1BHK apartment on the 10th floor — bright master bedroom opening onto a sunlit balcony, a lounge dressed with pop-art and velvet seating, a mosaic-tiled modular kitchen, and a spa-style bathroom. Perfectly placed near Chandigarh airport as your gateway to Shimla, Kasauli and the Himalayas.",
+    "amenities": ["High-speed Wi-Fi", "Air conditioning", "Smart TV", "Fully-equipped kitchen", "Geyser & rain shower", "Balcony with open views", "King-size bed", "Daily-cleaned linens"],
+    "house_rules": [
+        "Maximum 4 guests — strictly enforced.",
+        PROPERTY["house_rule"],
+        "Check-in 2:00 PM · Check-out 11:00 AM.",
+        "Government ID required for all guests at arrival.",
+    ],
+}
+
+
+class ListingInput(BaseModel):
+    description: str
+    amenities: List[str]
+    house_rules: List[str]
+
+
+async def get_listing() -> dict:
+    doc = await db.listing_settings.find_one({"key": "listing"}, {"_id": 0, "key": 0})
+    return {**DEFAULT_LISTING, **(doc or {})}
+
+
+@api_router.put("/host/listing")
+async def update_listing(body: ListingInput, host: dict = Depends(require_host)):
+    data = {"description": body.description.strip(), "amenities": [a.strip() for a in body.amenities if a.strip()], "house_rules": [r.strip() for r in body.house_rules if r.strip()]}
+    await db.listing_settings.update_one({"key": "listing"}, {"$set": data}, upsert=True)
+    return {"listing": data}
+
+
 @api_router.get("/property")
 async def get_property():
     p = PROPERTY
+    listing = await get_listing()
     return {
+        **listing,
         "id": p["id"], "name": p["name"], "tagline": p["tagline"],
         "base_rate": p["base_rate"], "base_guests": p["base_guests"],
         "max_guests": p["max_guests"], "extra_guest_fee": p["extra_guest_fee"],
@@ -681,7 +713,7 @@ async def delete_quick_reply(qid: str, host: dict = Depends(require_host)):
 # Startup
 # ---------------------------------------------------------------------------
 DEFAULT_TEMPLATES = [
-    {"title": "Check-in Instructions", "message": "Hello! Warm welcome to Nestavia Zirakpur. Your check-in is from 2 PM. Please share your ID on arrival. Reach out anytime — Gurpreet Kaur."},
+    {"title": "Check-in Instructions", "message": "Hello! Warm welcome to Nestavia Zirakpur. Your check-in is from 2 PM. Please share your ID on arrival. Reach out anytime — Dr. Gurpreet Kaur."},
     {"title": "Directions", "message": "Here is the exact location for your confirmed stay: Unit No. 1001, 10th Floor, Maya Garden Magnesia Tower-1, PR-7 Airport road, ZIRAKPUR, PUNJAB 140603. Map: https://maps.app.goo.gl/Qb1YFdH2ay7NKLwY6"},
     {"title": "Thank You", "message": "Thank you for staying at Nestavia! We'd love a review on Instagram @Nestavia_stays. Safe travels!"},
 ]
@@ -702,7 +734,7 @@ async def startup():
     if existing is None:
         await db.users.insert_one({
             "email": admin_email, "password_hash": hash_password(admin_password),
-            "name": "Gurpreet Kaur", "phone": PROPERTY["host_whatsapp"],
+            "name": "Dr. Gurpreet Kaur", "phone": PROPERTY["host_whatsapp"],
             "role": "host", "created_at": datetime.now(timezone.utc).isoformat(),
         })
         logger.info("Host account seeded")

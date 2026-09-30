@@ -5,12 +5,11 @@ import { HeroGallery } from "@/components/HeroGallery";
 import { BookingWidget } from "@/components/BookingWidget";
 import { Reviews } from "@/components/Reviews";
 import { Footer } from "@/components/Footer";
+import { ShareButton } from "@/components/ShareButton";
 import { MapPin, Users, BedDouble, Bath, Wifi, Snowflake, Tv, UtensilsCrossed, ShieldAlert, Lock, Mountain, Sparkles } from "lucide-react";
 
-const AMENITIES = [
-  [Wifi, "High-speed Wi-Fi"], [Snowflake, "Air conditioning"], [Tv, "Smart TV"], [UtensilsCrossed, "Fully-equipped kitchen"],
-  [Bath, "Geyser & rain shower"], [Mountain, "Balcony with open views"], [BedDouble, "King-size bed"], [Sparkles, "Daily-cleaned linens"],
-];
+const ICONS = [["wifi", Wifi], ["air", Snowflake], ["ac", Snowflake], ["tv", Tv], ["kitchen", UtensilsCrossed], ["shower", Bath], ["geyser", Bath], ["balcony", Mountain], ["view", Mountain], ["bed", BedDouble]];
+const iconFor = (t) => (ICONS.find(([k]) => t.toLowerCase().includes(k)) || [null, Sparkles])[1];
 
 export default function Home() {
   const [property, setProperty] = useState(null);
@@ -28,7 +27,8 @@ export default function Home() {
           <p className="eyebrow">Zirakpur · Punjab · Direct booking</p>
           <h1 data-testid="property-title" className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0F281E] mt-2">{property.name}</h1>
           <p className="text-base md:text-lg text-[#3D5A45] mt-3 italic font-serif">"{property.tagline}"</p>
-          <div className="flex flex-wrap gap-4 mt-4 text-sm text-[#5A655D]">
+          <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-[#5A655D]">
+            <ShareButton property={property} />
             <span className="flex items-center gap-1.5"><Users size={15} /> Up to {property.max_guests} guests</span>
             <span className="flex items-center gap-1.5"><BedDouble size={15} /> 1 bedroom</span>
             <span className="flex items-center gap-1.5"><Bath size={15} /> 1 bathroom</span>
@@ -44,9 +44,7 @@ export default function Home() {
                 <img src={LOGO} alt="Host" className="h-16 w-16 rounded-full ring-2 ring-[#C5A059] object-cover" />
                 <div><h2 className="font-serif text-2xl sm:text-3xl font-semibold text-[#0F281E]">Hosted by {property.host_name}</h2><p className="text-sm text-[#5A655D]">Superhost · Responds within an hour on WhatsApp</p></div>
               </div>
-              <p className="text-base text-[#1A1D1A] leading-relaxed mt-6">
-                A private, tastefully-designed 1BHK apartment on the 10th floor — bright master bedroom opening onto a sunlit balcony, a lounge dressed with pop-art and velvet seating, a mosaic-tiled modular kitchen, and a spa-style bathroom. Perfectly placed near Chandigarh airport as your gateway to Shimla, Kasauli and the Himalayas.
-              </p>
+              <p data-testid="property-description" className="text-base text-[#1A1D1A] leading-relaxed mt-6 whitespace-pre-line">{property.description}</p>
             </section>
 
             <section data-testid="walkthrough-section" className="rise rise-2">
@@ -58,7 +56,7 @@ export default function Home() {
             <section className="rise rise-2">
               <p className="eyebrow">What this place offers</p>
               <div className="grid sm:grid-cols-2 gap-4 mt-5">
-                {AMENITIES.map(([Icon, t]) => <div key={t} className="flex items-center gap-3 text-sm text-[#1A1D1A]"><span className="h-10 w-10 rounded-full bg-[#F0F4F1] text-[#3D5A45] flex items-center justify-center"><Icon size={18} /></span>{t}</div>)}
+                {property.amenities.map((t) => { const Icon = iconFor(t); return <div key={t} data-testid="amenity-item" className="flex items-center gap-3 text-sm text-[#1A1D1A]"><span className="h-10 w-10 rounded-full bg-[#F0F4F1] text-[#3D5A45] flex items-center justify-center"><Icon size={18} /></span>{t}</div>; })}
               </div>
             </section>
 
@@ -66,10 +64,7 @@ export default function Home() {
               <div data-testid="house-rules-card" className="card-lux p-6 border-l-4 !border-l-[#C5A059]">
                 <div className="flex items-center gap-2 text-[#0F281E] font-semibold"><ShieldAlert size={18} className="text-[#C5A059]" /> House rules</div>
                 <ul className="text-sm text-[#1A1D1A] mt-3 space-y-2 list-disc pl-4">
-                  <li>Maximum {property.max_guests} guests — strictly enforced.</li>
-                  <li>{property.house_rule}</li>
-                  <li>Check-in 2:00 PM · Check-out 11:00 AM.</li>
-                  <li>Government ID required for all guests at arrival.</li>
+                  {property.house_rules.map((r) => <li key={r} data-testid="house-rule-item">{r}</li>)}
                 </ul>
               </div>
               <div data-testid="location-privacy-card" className="card-lux p-6 bg-[#0F281E] !border-[#1B3B2B] text-white">

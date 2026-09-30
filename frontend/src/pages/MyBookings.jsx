@@ -53,7 +53,7 @@ const BookingCard = ({ b, onCancel, onReviewed }) => {
           <p className="text-sm mt-2">{b.address}</p>
           <div className="flex flex-wrap gap-3 mt-4">
             <a data-testid={`maps-link-${b.id}`} href={b.maps_link} target="_blank" rel="noreferrer" className="btn-gold px-4 py-2 text-xs inline-flex items-center gap-1.5"><ExternalLink size={14} /> Open in Google Maps</a>
-            <a href={waLink("918802757866", `Hi Gurpreet, this is ${b.guest_name}. My booking (${fmtDate(b.check_in)} → ${fmtDate(b.check_out)}) is confirmed — could you share check-in instructions?`)} target="_blank" rel="noreferrer" className="px-4 py-2 text-xs rounded-full border border-white/30 inline-flex items-center gap-1.5 hover:bg-white/10"><MessageCircle size={14} /> WhatsApp host</a>
+            <a href={waLink("918802757866", `Hi Dr. Gurpreet, this is ${b.guest_name}. My booking (${fmtDate(b.check_in)} → ${fmtDate(b.check_out)}) is confirmed — could you share check-in instructions?`)} target="_blank" rel="noreferrer" className="px-4 py-2 text-xs rounded-full border border-white/30 inline-flex items-center gap-1.5 hover:bg-white/10"><MessageCircle size={14} /> WhatsApp host</a>
           </div>
         </div>
       ) : b.status === "pending" ? (

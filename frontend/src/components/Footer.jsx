@@ -16,7 +16,7 @@ export const Footer = ({ property }) => (
         <a data-testid="footer-whatsapp-link" href={waLink(property?.host_whatsapp || "918802757866", "Hi Nestavia, I have a question about your Zirakpur stay.")} target="_blank" rel="noreferrer" className="inline-block mt-4 text-sm text-[#E6C687] hover:underline">+91 88027 57866</a>
       </div>
       <div className="text-center">
-        <p className="eyebrow mb-4">Follow us on Instagram</p>
+        <p className="eyebrow mb-4">Follow and review us on Instagram</p>
         <img src={INSTA_QR} alt="Instagram QR" className="h-44 w-44 mx-auto rounded-xl object-contain bg-white p-2" data-testid="footer-insta-qr" />
         <a data-testid="footer-insta-link" href="https://instagram.com/Nestavia_stays" target="_blank" rel="noreferrer" className="inline-block mt-4 text-sm text-[#E6C687] hover:underline">@Nestavia_stays</a>
       </div>

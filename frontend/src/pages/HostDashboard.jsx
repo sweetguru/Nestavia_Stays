@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { api, inr, errMsg } from "@/lib/api";
 import { HostCalendar } from "@/components/HostCalendar";
 import { BookingQueue } from "@/components/BookingQueue";
+import { CheckinReminders } from "@/components/CheckinReminders";
+import { ListingEditor } from "@/components/ListingEditor";
 import { Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,7 +29,7 @@ export default function HostDashboard() {
     <main data-testid="host-dashboard" className="bg-[#0F281E] min-h-screen text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10">
         <p className="eyebrow">Host portal</p>
-        <h1 className="font-serif text-4xl sm:text-5xl font-bold mt-2">Welcome back, Gurpreet</h1>
+        <h1 className="font-serif text-4xl sm:text-5xl font-bold mt-2">Welcome back, Dr. Gurpreet</h1>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
           <Stat tid="stat-revenue" label="Revenue collected" value={stats ? inr(stats.total_revenue) : "—"} />
           <Stat tid="stat-pending" label="Pending approvals" value={stats?.pending ?? "—"} hot />
@@ -38,6 +40,7 @@ export default function HostDashboard() {
       <div className="bg-[#F8F6F0] text-[#1A1D1A] rounded-t-[2rem]">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 grid lg:grid-cols-[1fr_420px] gap-8">
           <section>
+            <div className="mb-6"><CheckinReminders bookings={bookings} /></div>
             <div className="flex flex-wrap items-center gap-2 mb-5">
               {["pending", "confirmed", "completed", "cancelled", "rejected", "all"].map((f) => <button key={f} data-testid={`filter-${f}`} onClick={() => setFilter(f)} className={`px-4 py-1.5 rounded-full text-xs font-semibold capitalize transition-colors ${filter === f ? "bg-[#0F281E] text-white" : "bg-white border border-[#E8E2D2] text-[#3D5A45]"}`}>{f}</button>)}
             </div>
@@ -45,6 +48,7 @@ export default function HostDashboard() {
           </section>
           <aside className="space-y-6">
             {avail && <HostCalendar avail={avail} reload={reload} />}
+            <ListingEditor />
             <div data-testid="quick-replies" className="card-lux p-6">
               <h3 className="font-serif text-2xl text-[#0F281E]">WhatsApp quick replies</h3>
               <div className="space-y-3 mt-4">
