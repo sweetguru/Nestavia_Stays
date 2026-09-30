@@ -6,6 +6,8 @@ export const WHATSAPP_QR = `${A1}/e6u7uvvy_WhatsApp_Nestavia.webp`;
 export const INSTA_QR = `${A1}/7hwd322g_nestavia_Insta_qr.webp`;
 export const GPAY_QR = `${A1}/xsai1a6d_Gpay_scan_code.jpeg`;
 
+export const WALKTHROUGH_VIDEO = `${A2}/6mmtainl_Nestavia_Walkaround_Website.mp4`;
+
 export const GALLERY = [
   { url: `${A2}/rk0f6eyg_IMG_0488.webp`, title: "Master Bedroom with Balcony" },
   { url: `${A2}/5tkoybxj_IMG_0510.webp`, title: "Living Lounge" },

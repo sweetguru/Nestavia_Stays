@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { LOGO } from "@/lib/assets";
+import { LOGO, GALLERY, WALKTHROUGH_VIDEO } from "@/lib/assets";
 import { HeroGallery } from "@/components/HeroGallery";
 import { BookingWidget } from "@/components/BookingWidget";
 import { Reviews } from "@/components/Reviews";
@@ -47,6 +47,12 @@ export default function Home() {
               <p className="text-base text-[#1A1D1A] leading-relaxed mt-6">
                 A private, tastefully-designed 1BHK apartment on the 10th floor — bright master bedroom opening onto a sunlit balcony, a lounge dressed with pop-art and velvet seating, a mosaic-tiled modular kitchen, and a spa-style bathroom. Perfectly placed near Chandigarh airport as your gateway to Shimla, Kasauli and the Himalayas.
               </p>
+            </section>
+
+            <section data-testid="walkthrough-section" className="rise rise-2">
+              <p className="eyebrow">Property walkthrough</p>
+              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-[#0F281E] mt-2">Take a tour before you arrive</h2>
+              <video data-testid="walkthrough-video" src={WALKTHROUGH_VIDEO} controls playsInline preload="metadata" poster={GALLERY[0].url} className="w-full mt-5 rounded-2xl border border-[#E8E2D2] shadow-[0_8px_30px_-12px_rgba(15,40,30,0.25)] bg-black" />
             </section>
 
             <section className="rise rise-2">

@@ -247,11 +247,8 @@ def public_user(user: dict) -> dict:
 
 
 async def get_current_user(request: Request) -> dict:
-    token = request.cookies.get("access_token")
-    if not token:
-        auth_header = request.headers.get("Authorization", "")
-        if auth_header.startswith("Bearer "):
-            token = auth_header[7:]
+    auth_header = request.headers.get("Authorization", "")
+    token = auth_header[7:] if auth_header.startswith("Bearer ") else request.cookies.get("access_token")
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     try:
@@ -561,8 +558,6 @@ async def cancel_booking(booking_id: str, user: dict = Depends(get_current_user)
     paid = bk.get("amount_due", 0)
     if hours >= 96:
         refund_pct, refund = 100, paid
-    elif hours <= 48:
-        refund_pct, refund = 40, round(paid * 0.40)
     else:
         refund_pct, refund = 40, round(paid * 0.40)
     await db.bookings.update_one({"id": booking_id}, {"$set": {"status": "cancelled", "refund_amount": refund, "refund_percent": refund_pct}})

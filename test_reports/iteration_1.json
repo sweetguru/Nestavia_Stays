@@ -1,0 +1,38 @@
+{
+  "summary": "First test run for Nestavia Zirakpur. Full backend pytest suite (19/19) covers pricing engine (weekday/weekend/extra guest/last-minute/partial/7-day rules/400s), auth (register/login/me/duplicate/wrong-password/host role), booking flow (upload receipt, create booking, host lists, approve reveals address, host fetches file, complete + review + average, double-book 409, review-before-complete 403), and host calendar (block/unblock/rate override reflected in quote). Frontend Playwright verified end-to-end: home loads with 5 gallery photos, quote breakdown reactive to guests/pay-option toggles, logged-out reserve redirects to /auth, guest register+book with receipt upload lands on /my-bookings with pending status and address-locked banner, host login lands on /host with dashboard stats + approve button, receipt image displayed, whatsapp-confirm-btn href contains wa.me and ZIRAKPUR address, complete-btn works, host calendar block turns date red and rate override label shows '₹2800' on the day cell, after completion the review-form appears in /my-bookings, submitted review shows on home reviews section, mobile 390px has no horizontal overflow.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "auth cookie precedence", "issue": "get_current_user prefers cookie over Authorization header. When two different users' Bearer tokens are used from the same client with a persistent cookie jar, the cookie silently wins. This is a real gotcha but not a production bug because browser clients rotate cookies on login. Consider preferring Authorization header when explicitly provided."},
+      {"endpoint": "/api/bookings/{id}/cancel", "issue": "Cancellation branches for hours>48 and hours<=48 both return 40% refund; spec differentiates ONLY at >=96h (100%) vs <96h (40%). Current code effectively matches spec but the elif/else duplicate is redundant/confusing — collapse into a single 40% branch."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Booking widget", "issues": ["Uses browser-native <input type=date> instead of shadcn calendar — acceptable per spec, but the two date pickers render inconsistently across browsers."]},
+      {"screen": "Location-privacy card (dark green)", "issues": ["Text 'For guest privacy...' uses #E6C687 gold on dark green — legible but low contrast; body copy uses white/75 which is fine."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "OPTIONAL: In get_current_user, prefer Authorization header when present (avoids stale cookie shadowing a fresh Bearer token — mainly a test-tooling issue).",
+    "OPTIONAL: Simplify duplicate refund branches in cancel_booking."
+  ],
+  "critical_code_review_comments": [
+    "server.py is ~745 lines in a single module — acceptable for MVP but should be split (auth/, bookings/, host/, storage/) as it grows.",
+    "PROPERTY['secret_address'] and 'secret_maps' are hardcoded in server.py AND duplicated in /app/frontend/src/components/BookingQueue.jsx (ADDRESS/MAPS constants). Any address change must be updated in both places — extract to backend and let the frontend pull from booking payload only.",
+    "Bookings endpoint /api/bookings (host) always returns raw booking docs (including receipt_file_id, transaction_ref, etc.) — fine because require_host, but confirm no PII leakage to guest-facing endpoints.",
+    "@app.on_event('startup') and 'shutdown' are deprecated in newer FastAPI; switch to lifespan.",
+    "compute_quote reads all rate_overrides for every quote — acceptable at current scale but O(N) DB scan per quote."
+  ],
+  "updated_files": ["/app/backend/tests/backend_test.py"],
+  "success_rate": {"backend": "100% (19/19)", "frontend": "100% (all critical flows verified)"},
+  "test_credentials": "Host sweetguru88@gmail.com / Nestavia@2026. Test guest created during run: test_ui2_1790744109@example.com / pass123 (has 1 completed booking with review).",
+  "seed_data_creation": "Created 1 guest + 1 booking (approved + completed + reviewed) + 1 review during frontend testing. Backend pytest also created several TEST_ prefixed guests and bookings that remain in DB.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend test file at /app/backend/tests/backend_test.py — run with `python -m pytest backend/tests/backend_test.py -o addopts=''` to disable xdist (session fixtures created shared users). All frontend data-testids verified in run. Frontend uses localStorage 'nestavia_token' as Bearer; backend accepts either Bearer OR cookie (cookie wins if both present).",
+  "rca of the issue": "No functional bugs found. Minor DX issue: backend prefers cookies over Bearer in get_current_user (see server.py line 250) which caused initial pytest fixtures using a persistent requests.Session to fail cross-role tests. Fixed on the test side by using top-level `requests` (no cookie jar) with explicit Authorization headers per role."
+}
