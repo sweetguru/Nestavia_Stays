@@ -27,8 +27,8 @@ auth/register|login|logout|me · property · pricing/quote · availability · up
 ## Implemented (2026-06)
 - Full backend + frontend; walkthrough video section on home
 - Tested: /app/test_reports/iteration_1.json — 19/19 backend, full frontend e2e pass
+- 2026-06 (iteration 2, all pass): host renamed 'Dr. Gurpreet Kaur'; footer 'Follow and review us on Instagram'; host WhatsApp review-request link on completed bookings; 'Arriving within 48 hours' reminder list with WhatsApp reminder buttons; host listing editor (description/amenities/house rules via PUT /host/listing, stored in listing_settings); guest 'Share on WhatsApp' button + OG meta tags for link preview
 
 ## Backlog
 - P1: Email notifications on booking status change (needs provider)
-- P2: Host-editable property text/amenities from dashboard
 - P2: Multi-photo receipt upload, booking search/filter by date

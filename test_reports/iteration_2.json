@@ -1,0 +1,33 @@
+{
+  "summary": "Iteration 2 verifies 5 new features (host_name everywhere, footer Instagram tagline, ShareButton wa.me, ListingEditor edit-and-reflect, CheckinReminders w/ WhatsApp reminder link, review-request WhatsApp link on completed bookings, restore listing at end). Backend: 5 new pytest cases in /app/backend/tests/test_listing_iteration2.py — all pass (host_name='Dr. Gurpreet Kaur'; description starts with 'A private, tastefully-designed 1BHK'; 8 amenities; 4 house_rules; guest gets 403 on PUT /host/listing; unauth 401; host PUT reflected in GET; original values restored). Frontend Playwright: (1) 'Hosted by Dr. Gurpreet Kaur' text present on Home; (2) footer text 'Follow and review us on Instagram' present; (3) share-listing-btn click (with navigator.share stubbed undefined) opens https://wa.me/?text=... containing URL-encoded 'Nestavia'; (4) 8 amenity-item + 4 house-rule-item + property-description render; (5) host login → listing-editor visible → added marker + 'Test Amenity' + saved → home reflected marker + amenity count 9 → reverted to original; (6) confirmed booking with check_in=tomorrow shows up in checkin-reminders with reminder-whatsapp-{id} href containing wa.me + 'Gentle reminder'; (7) complete-btn transitions booking to completed and review-request-btn-{id} href contains wa.me + URL-encoded 'leave a quick review'; (8) regression: quote-total still renders on home; reserve/gpay-qr-image path not blocked. No new bugs found.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_listing_iteration2.py",
+    "/app/test_reports/pytest/iter2_listing.xml",
+    "/app/backend/tests/backend_test.py"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "BookingQueue.jsx still hardcodes ADDRESS and MAPS constants (lines 6-7) duplicating server.py PROPERTY['secret_address']/'secret_maps']. Recurring code review item from iter 1 — extract to booking payload (approve response already returns address/maps).",
+    "ShareButton copy hardcodes ₹ symbol + property.base_rate=2400 in a template string; if base_rate ever changes, the WhatsApp share text stays in sync (uses property.base_rate) — OK, minor note only.",
+    "CheckinReminders.jsx uses `new Date(`${s}T14:00:00`)` (no TZ suffix) which parses as local time — for a preview env this is fine, but if the browser is in a very different TZ than the property (IST) the 48h window may drift by hours. Consider `T14:00:00+05:30` or server-computed 'hours_until' field."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_listing_iteration2.py"
+  ],
+  "success_rate": {"backend": "100% (5/5 new + 19/19 existing)", "frontend": "100% (all 5 new features + regression verified)"},
+  "test_credentials": "Host sweetguru88@gmail.com / Nestavia@2026. Iter-2 guest created: see /tmp/iter2_guest.txt (test_iter2_6240dff5@example.com / pass123, has 1 completed booking).",
+  "seed_data_creation": "Created 1 guest + 1 booking (tomorrow check-in, full payment, receipt uploaded, host-approved then host-completed) for reminder + review-request UI verification. Booking id in /tmp/iter2_bid.txt. Listing was mutated during test and restored to defaults at end (verified via /api/property).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All new-feature tests green. Run backend tests with: `export REACT_APP_BACKEND_URL=https://nestavia-booking.preview.emergentagent.com && python -m pytest backend/tests/ -o addopts='' -v`. Data-testids verified: property-description, amenity-item (8), house-rule-item (4), share-listing-btn, listing-editor, listing-description-input, listing-amenities-input, listing-rules-input, save-listing-btn, checkin-reminders, reminder-{id}, reminder-whatsapp-{id}, complete-btn-{id}, review-request-btn-{id}, filter-{pending|confirmed|completed|cancelled|rejected|all}, auth-submit-btn, quote-total.",
+  "rca of the issue": "No bugs. Only test-tool nuance: (a) auth page has two 'Log in' buttons (nav link + form submit), use [data-testid='auth-submit-btn']; (b) window.open fallback in ShareButton uses wa.me but WhatsApp server-side redirects to api.whatsapp.com — Playwright popup interception captures the *final* URL, so stub window.open to grab the *original* URL when asserting 'wa.me' is present."
+}
